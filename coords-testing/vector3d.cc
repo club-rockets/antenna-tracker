@@ -28,6 +28,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include "vector3d.h"
 
+#include <iomanip>
 #include <iostream>
 
 #include <cmath>
@@ -46,8 +47,8 @@ Vector3D Vector3D::Spheric()
 	Vector3D v;
 	double r = sqrt(sq(x_) + sq(y_) + sq(z_));
 
-	v.lon(deg(atan2(y_, x_)));
-	v.lat(deg(asin(z_ / r)));
+	v.lat(deg(atan2(y_, x_)));
+	v.lon(deg(asin(z_ / r)));
 	v.alt(r - EARTH_RADIUS);
 
 	return v;
@@ -57,24 +58,24 @@ Vector3D Vector3D::Cartesian()
 {
 	Vector3D v;
 
-	v.x((EARTH_RADIUS + z_) * cos(rad(x_)) * cos(rad(y_)));
-	v.y((EARTH_RADIUS + z_) * sin(rad(x_)) * cos(rad(y_)));
-	v.z((EARTH_RADIUS + z_) * sin(rad(y_)));
+	v.x((EARTH_RADIUS + alt()) * cos(rad(lat())) * cos(rad(lon())));
+	v.y((EARTH_RADIUS + alt()) * cos(rad(lat())) * sin(rad(lon())));
+	v.z((EARTH_RADIUS + alt()) * sin(rad(lat())));
 
 	return v;
 }
 
 Vector3D Vector3D::Project(Vector3D u)
 {
-	return u * (dotp(u) / u.norm_sq());
+	return u * (DotP(u) / u.norm_sq());
 }
 
-double Vector3D::dotp(Vector3D u)
+double Vector3D::DotP(Vector3D u)
 {
 	return (x_ * u.x() + y_ * u.y() + z_ * u.z());
 }
 
-Vector3D Vector3D::crossp(Vector3D u)
+Vector3D Vector3D::CrossP(Vector3D u)
 {
 	return Vector3D(
 		+(y_ * u.z() - u.y() * z_),
@@ -82,9 +83,9 @@ Vector3D Vector3D::crossp(Vector3D u)
 		+(x_ * u.y() - u.x() * y_));
 }
 
-double Vector3D::angle(Vector3D u)
+double Vector3D::Angle(Vector3D u)
 {
-	return acos((dotp(u)) / (norm() * u.norm()));
+	return acos((DotP(u)) / (norm() * u.norm()));
 }
 
 Vector3D Vector3D::operator+(Vector3D u)
@@ -125,17 +126,33 @@ void Vector3D::operator*=(double k)
 
 double Vector3D::operator*(Vector3D u)
 {
-	return dotp(u);
+	return DotP(u);
+}
+
+Vector3D Vector3D::operator/(double k)
+{
+	return (*this) * (1 / k);
+}
+
+void Vector3D::operator/=(double k)
+{
+	x_ /= k;
+	y_ /= k;
+	z_ /= k;
 }
 
 Vector3D Vector3D::operator%(Vector3D u)
 {
-	return crossp(u);
+	return CrossP(u);
 }
 
 std::ostream& operator<<(std::ostream& cout, Vector3D v)
 {
-	cout << "[" << v.x_ << " " << v.y_ << " " << v.z_ << "]";
+	int width = cout.width();
+	cout << std::setw(1) << "[";
+	cout << std::setw(width) << v.x_ << " ";
+	cout << std::setw(width) << v.y_ << " ";
+	cout << std::setw(width) << v.z_ << "]";
 	return cout;
 }
 

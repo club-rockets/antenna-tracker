@@ -60,14 +60,14 @@ public:
 	Vector3D Project(Vector3D u);
 
 	// Return the dot product of this vector and u
-	double dotp(Vector3D u);
+	double DotP(Vector3D u);
 
 	// Return the cross-product of this vector and u
-	Vector3D crossp(Vector3D u);
+	Vector3D CrossP(Vector3D u);
 
 	// Angle between two vectors
 	// NOTE: This should maybe be static, or renamed for clarity
-	double angle(Vector3D u);
+	double Angle(Vector3D u);
 
 	// ======== Operator overloads ======== //
 	// Vector addition
@@ -81,6 +81,18 @@ public:
 	// Vector multiplication by a constant
 	Vector3D operator*(double k);
 	void operator*=(double k);
+
+	// Vector multiplication by an int constant
+	Vector3D operator*(int k) 	{ return (*this) * ((double) k); }
+	void operator*=(int k) 		{ (*this) *= ((double) k); }
+
+	// Vector division by a constant
+	Vector3D operator/(double k);
+	void operator/=(double k);
+
+	// Vector division by an int constant
+	Vector3D operator/(int k)	{ return (*this) / ((double) k); }
+	void operator/=(int k)		{ (*this) /= ((double) k); }
 
 	// Vector dot product
 	double operator*(Vector3D u);
@@ -99,8 +111,8 @@ public:
 	double z() { return z_; }
 
 	// Get spherical components, simply a rename of xyz for readability
-	double lon() { return x_; }
-	double lat() { return y_; }
+	double lat() { return x_; }
+	double lon() { return y_; }
 	double alt() { return z_; }
 
 	// Get the norm of the vector
@@ -114,8 +126,8 @@ public:
 	void z(double z) { z_ = z; }
 
 	// Set spherical components, simply a rename of xyz for readability
-	void lon(double lon) { x_ = lon; }
-	void lat(double lat) { y_ = lat; }
+	void lat(double lat) { x_ = lat; }
+	void lon(double lon) { y_ = lon; }
 	void alt(double alt) { z_ = alt; }
 
 	// Set the norm of the vector
