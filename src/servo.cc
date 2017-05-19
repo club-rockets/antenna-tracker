@@ -34,32 +34,3 @@ std::ostream& operator<<(std::ostream& os, servo_angle sa)
 {
 	return os << "[" << sa.azimuth << " " << sa.altitude << "]";
 }
-
-servo_angle servo_angle_resolve(vec3 here, vec3 target, vec3 reference)
-{
-	// Transform LatLonAlt spherical coordinates to cartesian space;
-	here = here.Cartesian();
-	target = target.Cartesian();
-	reference = reference.Cartesian();
-
-	// Find direction vector from here to reference
-	// This vectors are parallel to the ground plane at "here"
-	vec3 to_reference_flat = (reference - here) - ((reference - here).Project(here));
-
-	// Find direction vector from here to target
-	vec3 to_target = (target - here);
-
-	// Find the direction vector that is parallel to the ground plane at "here"
-	vec3 to_target_flat = to_target - to_target.Project(here);
-
-	// Result is returned as vec3
-	// x is azimuth
-	// y is altitude
-	// z is unused (0)
-	servo_angle result = {
-		(deg((here % to_reference_flat).Angle(to_target_flat)) <= 90 ? 1 : -1) * deg(to_reference_flat.Angle(to_target_flat)),
-		(deg(here.Angle(to_target)) <= 90 ? 1 : -1) * deg(to_target_flat.Angle(to_target)),
-	};
-
-	return result;
-}
