@@ -4,6 +4,7 @@ EXE := tracker
 # Compiler
 CXX := g++
 CXXFLAGS := -MMD -D _DEBUG -c -g -Wall -std=c++11
+LIBS := -l boost_system
 
 INC_DIR := inc/
 SRC_DIR := src/
@@ -19,7 +20,7 @@ all: $(EXE)
 
 $(EXE): $(BINS)
 	@echo $@
-	@$(CXX) -o $@ $^ $(ALLEG)
+	@$(CXX) -o $@ $^ $(LIBS)
 
 $(BIN_DIR)%.o: $(SRC_DIR)%.cc
 	@echo $(subst src/,"",$<)

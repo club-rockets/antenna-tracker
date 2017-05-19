@@ -1,8 +1,9 @@
 /*
-	file: 	servo.h
+	file:	network.h
 	author:	David Bourgault
 
-	description: header file for functions pertaining to servos
+	description: header class for a simple UDP server that listens on port 8112
+	for JSON data containing "lat" "lon" "alt" values
 */
 
 /*
@@ -26,36 +27,29 @@ IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-#ifndef _servo_h_
-#define _servo_h_
+#ifndef _network_h_
+#define _network_h_
 
-#include "vector3d.h"
+#include <boost/array.hpp>
+#include <boost/asio.hpp>
 
-/**
- *	servo_angle tuple
- *	Contains the pair of angles sent to the servos. 
- */
-struct servo_angle {
-	double azimuth;
-	double altitude;
+#include "resolver.h"
+
+using boost::asio::ip::udp;
+
+class NetworkClient {
+private:
+	udp::socket socket_;
+	udp::endpoint remote_endpoint_;
+	boost::array<char, 100> recv_buffer_;
+
+	Resolver& resolver_;
+
+public:
+	NetworkClient(boost::asio::io_service& io_service, Resolver& resolver);
+
+	void StartReceive();
+	void HandleReceive(const boost::system::error_code& error, std::size_t bytes_transferred);
 };
-
-std::ostream& operator<<(std::ostream& os, servo_angle sa);
-
-/**
- * servo_angle_resolve()
- *
- * TODO: Document me
- * FIXME: Using Vector3D for Spherical, Cartesian and Servo's angles seems confusing
- *		Maybe use a different data struct for each. Only cartesian coordinates need
- *		operator overload and algebra...
- *
- *	param:
- *		here: 		GPs coordinates of the antenna tracker
- *		target:		GPS coordinates of the target/rocket
- *		reference:	GPS coordinates of a point in front of the antenna tracker
- *
- *	return: a struct containing azimuth and altitude angles
- */
 
 #endif

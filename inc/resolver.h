@@ -1,8 +1,10 @@
 /*
-	file: 	servo.h
+	file:	resolver.h
 	author:	David Bourgault
 
-	description: header file for functions pertaining to servos
+	description: header class for the resolver class that gets notified of any
+	update to gps values, calculates the servo's angle and tells the servo
+	controller
 */
 
 /*
@@ -26,36 +28,32 @@ IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-#ifndef _servo_h_
-#define _servo_h_
+#ifndef _resolver_h_
+#define _resolver_h_
 
+#include "servo.h"
 #include "vector3d.h"
 
-/**
- *	servo_angle tuple
- *	Contains the pair of angles sent to the servos. 
- */
-struct servo_angle {
-	double azimuth;
-	double altitude;
+class Resolver {
+private:
+	vec3 here_;
+	vec3 target_;
+	vec3 reference_;
+
+public:
+	Resolver(vec3 here, vec3 target);
+
+	void Resolve();
+
+	// Getters
+	vec3 here() { return here_.Spheric(); }
+	vec3 target() { return target_.Spheric(); }
+	vec3 reference() { return reference_.Spheric(); }
+
+	// Setters
+	void here(vec3 here) { here_ = here.Cartesian(); }
+	void target(vec3 target) { target_ = target.Cartesian(); }
+	void reference(vec3 reference) { reference_ = reference.Cartesian(); }
 };
-
-std::ostream& operator<<(std::ostream& os, servo_angle sa);
-
-/**
- * servo_angle_resolve()
- *
- * TODO: Document me
- * FIXME: Using Vector3D for Spherical, Cartesian and Servo's angles seems confusing
- *		Maybe use a different data struct for each. Only cartesian coordinates need
- *		operator overload and algebra...
- *
- *	param:
- *		here: 		GPs coordinates of the antenna tracker
- *		target:		GPS coordinates of the target/rocket
- *		reference:	GPS coordinates of a point in front of the antenna tracker
- *
- *	return: a struct containing azimuth and altitude angles
- */
 
 #endif
