@@ -40,8 +40,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "resolver.h"
 #include "vector3d.h"
 
-NetworkClient::NetworkClient(boost::asio::io_service& io_service, Resolver& resolver)
-	: socket_(io_service, udp::endpoint(udp::v4(), 8112))
+NetworkClient::NetworkClient(boost::asio::io_service& io_service, uint16_t udp_port, Resolver& resolver)
+	: socket_(io_service, udp::endpoint(udp::v4(), udp_port))
 	, resolver_(resolver)
 {
 	StartReceive();

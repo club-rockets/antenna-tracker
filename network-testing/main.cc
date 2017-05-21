@@ -37,33 +37,78 @@ Distributed under the Boost Software License, Version 1.0. (See accompanying
 file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 */
 
-#include <boost/array.hpp>
-#include <boost/asio.hpp>
 #include <iostream>
+#include <string>
+
+#include <boost/asio.hpp>
 
 using boost::asio::ip::udp;
 
+void print_usage()
+{
+	std::cout << "Usage: nettest [-p port]" << std::endl;
+}
+
+
 int main(int argc, char* argv[])
 {
+	uint16_t udp_port = 8112;
+
+	// Parse arguments
+	for (int i = 1; i < argc; i++) {
+		if (argv[i][0] == '-') {
+
+			// For all letters following the dash
+			bool skip = false;
+			for (uint j = 1; j < strlen(argv[i]) && !skip; j++) {
+				switch (argv[i][j]) {
+
+				// If the command is 'p', the next arg should be the port number.
+				// Read the port number and skip to the following argument.
+				// Else, warn the user about correct usage
+				case 'p':
+					if (argc > i + 1) {
+						udp_port = atoi(argv[i + 1]);
+						skip = true;
+						i++;
+					} else {
+						print_usage();
+					}
+					break;
+
+				// If the command is unknown, warn the user about correct usage
+				default:
+					print_usage();
+					break;
+				}
+			}
+		}
+	}
+
+	// Check udp port
+	if (udp_port < 1024) {
+		std::cout << "Cannot bind to port under 1024. Defaulting to port 8112." << std::endl;
+		udp_port = 8112;
+	}
+
+	// Start network service
 	boost::asio::io_service io_service;
 
 	udp::resolver resolver(io_service);
-	udp::resolver::query query(udp::v4(), "127.0.0.1", "8112");
+	udp::resolver::query query(udp::v4(), "127.0.0.1", std::to_string(udp_port));
 	udp::endpoint receiver_endpoint = *resolver.resolve(query);
 
 	udp::socket socket(io_service);
 	socket.open(udp::v4());
 
-	std::string data;
+	// Debug values, coordinates are for polymtl and should give an angle of ~75 with the north pole
+	std::string data = "{\"lat\":45.4947,\"lon\":-73.5623,\"alt\":216}";
 
+	// Start loop, send every time player hits enter
 	while (true) {
 		fflush(stdin);
 		getc(stdin);
-		
-		// Debug values, coordinates are for polymtl and should give an angle of ~75 with the north pole
-		data = "{\"lat\":45.5044,\"lon\":-73.6129,\"alt\":400}";
+
 		socket.send_to(boost::asio::buffer(data), receiver_endpoint);
 	}
-
-	return 0;
 }

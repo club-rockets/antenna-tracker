@@ -46,7 +46,7 @@ private:
 	Resolver& resolver_;
 
 public:
-	NetworkClient(boost::asio::io_service& io_service, Resolver& resolver);
+	NetworkClient(boost::asio::io_service& io_service, uint16_t udp_port, Resolver& resolver);
 
 	void StartReceive();
 	void HandleReceive(const boost::system::error_code& error, std::size_t bytes_transferred);
