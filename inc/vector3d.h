@@ -83,16 +83,16 @@ public:
 	void operator*=(double k);
 
 	// Vector multiplication by an int constant
-	Vector3D operator*(int k) 	{ return (*this) * ((double) k); }
-	void operator*=(int k) 		{ (*this) *= ((double) k); }
+	Vector3D operator*(int k) { return (*this) * ((double)k); }
+	void operator*=(int k) { (*this) *= ((double)k); }
 
 	// Vector division by a constant
 	Vector3D operator/(double k);
 	void operator/=(double k);
 
 	// Vector division by an int constant
-	Vector3D operator/(int k)	{ return (*this) / ((double) k); }
-	void operator/=(int k)		{ (*this) /= ((double) k); }
+	Vector3D operator/(int k) { return (*this) / ((double)k); }
+	void operator/=(int k) { (*this) /= ((double)k); }
 
 	// Vector dot product
 	double operator*(Vector3D u);

@@ -29,6 +29,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include "network.h"
 
+#include <exception>
 #include <string>
 
 #include <boost/array.hpp>
@@ -49,8 +50,7 @@ NetworkClient::NetworkClient(boost::asio::io_service& io_service, uint16_t udp_p
 
 void NetworkClient::StartReceive()
 {
-	socket_.async_receive_from(
-		boost::asio::buffer(recv_buffer_), remote_endpoint_,
+	socket_.async_receive_from(boost::asio::buffer(recv_buffer_), remote_endpoint_,
 		boost::bind(&NetworkClient::HandleReceive, this,
 			boost::asio::placeholders::error,
 			boost::asio::placeholders::bytes_transferred));
@@ -59,14 +59,22 @@ void NetworkClient::StartReceive()
 void NetworkClient::HandleReceive(const boost::system::error_code& error,
 	std::size_t bytes_transferred)
 {
-	nlohmann::json json = nlohmann::json::parse(recv_buffer_.begin(), recv_buffer_.begin() + bytes_transferred);
+	nlohmann::json json;
 
-	if (json.count("lat") && json.count("lon") && json.count("alt")) {
-		resolver_.target(vec3(json["lat"], json["lon"], json["alt"]));
-		resolver_.Resolve();
-	} else {
+	try {
+		json = nlohmann::json::parse(recv_buffer_.begin(), recv_buffer_.begin() + bytes_transferred);
+
+		if (json.count("lat") && json.count("lon") && json.count("alt")) {
+			resolver_.target(vec3(json["lat"], json["lon"], json["alt"]));
+			resolver_.Resolve();
+		} else {
 #ifdef _DEBUG
-		std::cout << "[Network] Received incomplete JSON." << std::endl;
+			std::cout << "[JSON] Incomplete JSON." << std::endl;
+#endif
+		}
+	} catch (std::exception e) {
+#ifdef _DEBUG
+		std::cout << "[JSON] Parsing error. " << std::endl;
 #endif
 	}
 

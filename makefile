@@ -3,7 +3,7 @@ EXE := tracker
 
 # Compiler
 CXX := g++
-CXXFLAGS := -MMD -D _DEBUG -c -g -Wall -std=c++11
+CXXFLAGS := -MMD -D _DEBUG -g -Wall -std=c++11
 LIBS := -l boost_system
 
 INC_DIR := inc/
@@ -16,7 +16,7 @@ SRCS := $(foreach sdir,$(SUBFOLDERS),$(wildcard $(sdir)*.cc))
 BINS := $(patsubst $(SRC_DIR)%.cc,$(BIN_DIR)%.o,$(SRCS))
 DEPS := $(patsubst $(SRC_DIR)%.cc,$(BIN_DIR)%.d,$(SRCS))
 
-all: $(EXE)
+all: $(EXE) nettest
 
 $(EXE): $(BINS)
 	@echo $@
@@ -27,8 +27,12 @@ $(BIN_DIR)%.o: $(SRC_DIR)%.cc
 	@mkdir -p $(dir $@)
 	@$(CXX) $(CXXFLAGS) -c -o $@ $< -I$(INC_DIR)
 
+nettest: network-testing/main.cc
+	@echo $@
+	@$(CXX) -Wall -std=c++11 $< -o nettest -lboost_system -lpthread
+
 clean:
-	@rm -rf $(BIN_DIR) hc.o
+	@rm -rf $(BIN_DIR) $(EXE) nettest
 
 run:
 	@./hc.o

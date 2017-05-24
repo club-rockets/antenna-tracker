@@ -33,7 +33,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 /**
  *	servo_angle tuple
- *	Contains the pair of angles sent to the servos. 
+ *	Contains the pair of angles sent to the servos.
  */
 struct servo_angle {
 	double azimuth;
@@ -41,21 +41,5 @@ struct servo_angle {
 };
 
 std::ostream& operator<<(std::ostream& os, servo_angle sa);
-
-/**
- * servo_angle_resolve()
- *
- * TODO: Document me
- * FIXME: Using Vector3D for Spherical, Cartesian and Servo's angles seems confusing
- *		Maybe use a different data struct for each. Only cartesian coordinates need
- *		operator overload and algebra...
- *
- *	param:
- *		here: 		GPs coordinates of the antenna tracker
- *		target:		GPS coordinates of the target/rocket
- *		reference:	GPS coordinates of a point in front of the antenna tracker
- *
- *	return: a struct containing azimuth and altitude angles
- */
 
 #endif

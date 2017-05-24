@@ -1,6 +1,6 @@
 /*
-	file:	resolver.h
-	author:	David Bourgault
+	file: resolver.h
+	author: David Bourgault
 
 	description: header class for the resolver class that gets notified of any
 	update to gps values, calculates the servo's angle and tells the servo

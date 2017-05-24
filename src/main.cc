@@ -1,6 +1,8 @@
+#include <exception>
 #include <iomanip>
 #include <iostream>
 
+#include "json.h"
 #include "network.h"
 #include "resolver.h"
 
@@ -12,14 +14,14 @@ void print_usage()
 int main(int argc, const char* argv[])
 {
 	uint16_t udp_port = 8112;
+	bool use_network = true;
 
 	// Parse arguments
 	for (int i = 1; i < argc; i++) {
 		if (argv[i][0] == '-') {
 
 			// For all letters following the dash
-			bool skip = false;
-			for (uint j = 1; j < strlen(argv[i]) && !skip; j++) {
+			for (uint j = 1, skip = 0; j < strlen(argv[i]) && !skip; j++) {
 				switch (argv[i][j]) {
 
 				// If the command is 'p', the next arg should be the port number.
@@ -33,6 +35,11 @@ int main(int argc, const char* argv[])
 					} else {
 						print_usage();
 					}
+					break;
+
+				// If the command is 'c', read input from stdin instead of network
+				case 'c':
+					use_network = false;
 					break;
 
 				// If the command is unknown, warn the user about correct usage
@@ -51,11 +58,35 @@ int main(int argc, const char* argv[])
 	}
 
 	// Debug values, here is ETSMTL and reference is geographic north
-	//Resolver resolver(vec3(45.4947, -73.5623, 216), vec3(90, 0, 0));
-	Resolver resolver(vec3(43.896283333, -72.51835, 85), vec3(90, 0, 0));
+	Resolver resolver(vec3(45.4947, -73.5623, 216), vec3(90, 0, 0));
 
-	// Start network service
-	boost::asio::io_service io_service;
-	NetworkClient network(io_service, udp_port, resolver);
-	io_service.run();
+	if (use_network) {
+		// Start network listening service
+		boost::asio::io_service io_service;
+		NetworkClient network(io_service, udp_port, resolver);
+		io_service.run();
+	} else {
+		// Start sdtin listening logic
+		char line[512];
+		while (true) {
+			std::cin.getline(line, 512);
+
+			nlohmann::json json;
+			try {
+				json = nlohmann::json::parse(line);
+				if (json.count("lat") && json.count("lon") && json.count("alt")) {
+					resolver.target(vec3(json["lat"], json["lon"], json["alt"]));
+					resolver.Resolve();
+				} else {
+#ifdef _DEBUG
+					std::cout << "[JSON] Incomplete JSON." << std::endl;
+#endif
+				}
+			} catch (std::exception e) {
+#ifdef _DEBUG
+				std::cout << "[JSON] Parsing error. " << std::endl;
+#endif
+			}
+		}
+	}
 }

@@ -26,17 +26,6 @@ COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
 IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-
-/* 
-original file: client.cpp
-original author: Christopher M. Kohlhoff
-
-Copyright (c) 2003-2017 Christopher M. Kohlhoff (chris at kohlhoff dot com)
-
-Distributed under the Boost Software License, Version 1.0. (See accompanying
-file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
-*/
-
 #include <iostream>
 #include <string>
 
@@ -48,7 +37,6 @@ void print_usage()
 {
 	std::cout << "Usage: nettest [-p port]" << std::endl;
 }
-
 
 int main(int argc, char* argv[])
 {
@@ -102,8 +90,10 @@ int main(int argc, char* argv[])
 	socket.open(udp::v4());
 
 	// Debug values, coordinates are for polymtl and should give an angle of ~75 with the north pole
-	std::string data = "{\"lat\":45.4947,\"lon\":-73.5623,\"alt\":216}";
+	std::string data = "{\"lat\":45.5044,\"lon\":-73.6129,\"alt\":216}";
 
+	//45.5032° N, 73.5267
+	//std::string data = "{\"lat\":45.00,\"lon\":-89.9999,\"alt\":0}";
 	// Start loop, send every time player hits enter
 	while (true) {
 		fflush(stdin);

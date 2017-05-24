@@ -1,9 +1,10 @@
 /*
-	file:	network.h
-	author:	David Bourgault
+        file:	network.h
+        author:	David Bourgault
 
-	description: header class for a simple UDP server that listens on port 8112
-	for JSON data containing "lat" "lon" "alt" values
+        description: header class for a simple UDP server that listens on port
+   8112
+        for JSON data containing "lat" "lon" "alt" values
 */
 
 /*
@@ -39,17 +40,19 @@ using boost::asio::ip::udp;
 
 class NetworkClient {
 private:
-	udp::socket socket_;
-	udp::endpoint remote_endpoint_;
-	boost::array<char, 100> recv_buffer_;
+  udp::socket socket_;
+  udp::endpoint remote_endpoint_;
+  boost::array<char, 100> recv_buffer_;
 
-	Resolver& resolver_;
+  Resolver &resolver_;
 
 public:
-	NetworkClient(boost::asio::io_service& io_service, uint16_t udp_port, Resolver& resolver);
+  NetworkClient(boost::asio::io_service &io_service, uint16_t udp_port,
+                Resolver &resolver);
 
-	void StartReceive();
-	void HandleReceive(const boost::system::error_code& error, std::size_t bytes_transferred);
+  void StartReceive();
+  void HandleReceive(const boost::system::error_code &error,
+                     std::size_t bytes_transferred);
 };
 
 #endif

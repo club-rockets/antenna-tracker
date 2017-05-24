@@ -58,7 +58,7 @@ void Resolver::Resolve()
 	// z is unused (0)
 	servo_angle result = {
 		(deg((here_ % to_reference_flat).Angle(to_target_flat)) <= 90 ? 1 : -1) * deg(to_reference_flat.Angle(to_target_flat)),
-		(deg(here_.Angle(to_target)) <= 90 ? 1 : -1) * deg(to_target_flat.Angle(to_target)),
+		(90 - deg(here_.Angle(to_target)))
 	};
 
 // servo_controler.update_angles(result);
